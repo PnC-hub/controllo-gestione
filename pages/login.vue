@@ -3,11 +3,11 @@
     <NuxtLayout name="auth">
       <div class="w-full max-w-md">
         <div class="text-center mb-8">
-          <div class="w-16 h-16 bg-cyan-500 rounded-2xl flex items-center justify-center mx-auto mb-4">
-            <i class="fas fa-chart-pie text-white text-2xl"></i>
+          <div :class="[brand.isProfitera ? 'bg-emerald-600' : 'bg-cyan-600', 'w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4']">
+            <i :class="['fas', brand.logo, 'text-white text-2xl']"></i>
           </div>
-          <h1 class="text-2xl font-bold text-slate-800">Controllo di Gestione</h1>
-          <p class="text-slate-500 mt-1">Accedi al modulo contabilità e finanza</p>
+          <h1 class="text-2xl font-bold text-slate-800">{{ brand.name }}</h1>
+          <p class="text-slate-500 mt-1">{{ brand.tagline }}</p>
         </div>
 
         <div class="bg-white rounded-2xl shadow-lg border border-slate-200 p-8">
@@ -23,8 +23,8 @@
             <!-- OTP Form -->
             <div v-if="!showRecoveryForm">
               <div class="text-center mb-6">
-                <div class="w-16 h-16 bg-cyan-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <i class="fas fa-shield-alt text-2xl text-cyan-600"></i>
+                <div :class="[brand.isProfitera ? 'bg-emerald-100' : 'bg-cyan-100', 'w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4']">
+                  <i :class="['fas fa-shield-alt text-2xl', brand.isProfitera ? 'text-emerald-600' : 'text-cyan-600']"></i>
                 </div>
                 <h2 class="text-xl font-semibold text-slate-800">Verifica a due fattori</h2>
                 <p v-if="authStore.twoFactor.userEmail" class="text-sm text-slate-600 mt-2">
@@ -47,13 +47,13 @@
                       pattern="[0-9]*"
                       inputmode="numeric"
                       autocomplete="one-time-code"
-                      class="w-full text-center text-2xl tracking-[0.5em] py-4 border border-slate-300 rounded-xl focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 outline-none"
+                      class="w-full text-center text-2xl tracking-[0.5em] py-4 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none"
                       placeholder="000000"
                     />
                   </div>
 
                   <label class="flex items-center">
-                    <input v-model="trustDevice" type="checkbox" class="w-4 h-4 text-cyan-600 border-slate-300 rounded focus:ring-cyan-500" />
+                    <input v-model="trustDevice" type="checkbox" class="w-4 h-4 text-emerald-600 border-slate-300 rounded focus:ring-emerald-500" />
                     <span class="ml-2 text-sm text-slate-600">Ricorda questo dispositivo per 14 giorni</span>
                   </label>
 
@@ -64,7 +64,7 @@
                   <button
                     type="submit"
                     :disabled="loading || otpCode.length !== 6"
-                    class="w-full py-3 bg-cyan-500 hover:bg-cyan-600 text-white font-semibold rounded-xl transition disabled:opacity-50"
+                    :class="[brand.isProfitera ? 'bg-emerald-500 hover:bg-emerald-600' : 'bg-cyan-500 hover:bg-cyan-600', 'w-full py-3 text-white font-semibold rounded-xl transition disabled:opacity-50']"
                   >
                     <span v-if="loading"><i class="fas fa-spinner fa-spin mr-2"></i>Verifica in corso...</span>
                     <span v-else><i class="fas fa-check mr-2"></i>Verifica</span>
@@ -75,7 +75,7 @@
                       type="button"
                       @click="handleResendOtp"
                       :disabled="resendLoading || resendCooldown > 0"
-                      class="text-sm text-cyan-600 hover:text-cyan-700 disabled:text-slate-400"
+                      :class="['text-sm disabled:text-slate-400', brand.isProfitera ? 'text-emerald-600 hover:text-emerald-700' : 'text-cyan-600 hover:text-cyan-700']"
                     >
                       <span v-if="resendCooldown > 0">Reinvia codice tra {{ resendCooldown }}s</span>
                       <span v-else-if="resendLoading"><i class="fas fa-spinner fa-spin mr-1"></i>Invio...</span>
@@ -89,7 +89,7 @@
                       @click="showRecoveryForm = true"
                       class="text-sm text-slate-500 hover:text-slate-700"
                     >
-                      Hai perso l'accesso al telefono? <span class="text-cyan-600">Usa codice di recupero</span>
+                      Hai perso l'accesso al telefono? <span :class="brand.isProfitera ? 'text-emerald-600' : 'text-cyan-600'">Usa codice di recupero</span>
                     </button>
                   </div>
                 </div>
@@ -115,7 +115,7 @@
                     <input
                       v-model="recoveryCode"
                       type="text"
-                      class="w-full text-center text-lg tracking-wider py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 outline-none font-mono"
+                      class="w-full text-center text-lg tracking-wider py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none font-mono"
                       placeholder="xxxx-xxxx"
                     />
                   </div>
@@ -155,7 +155,7 @@
                 v-model="email"
                 type="email"
                 required
-                class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20 outline-none transition"
+                :class="['w-full px-4 py-3 rounded-xl border border-slate-300 outline-none transition', brand.isProfitera ? 'focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20' : 'focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20']"
                 placeholder="nome@azienda.it"
               />
             </div>
@@ -166,7 +166,7 @@
                 v-model="password"
                 type="password"
                 required
-                class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20 outline-none transition"
+                :class="['w-full px-4 py-3 rounded-xl border border-slate-300 outline-none transition', brand.isProfitera ? 'focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20' : 'focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20']"
                 placeholder="••••••••"
               />
             </div>
@@ -178,7 +178,7 @@
             <button
               type="submit"
               :disabled="loading"
-              class="w-full py-3 bg-cyan-500 hover:bg-cyan-600 text-white font-semibold rounded-xl transition disabled:opacity-50"
+              :class="[brand.isProfitera ? 'bg-emerald-500 hover:bg-emerald-600' : 'bg-cyan-500 hover:bg-cyan-600', 'w-full py-3 text-white font-semibold rounded-xl transition disabled:opacity-50']"
             >
               <span v-if="loading"><i class="fas fa-spinner fa-spin mr-2"></i>Accesso...</span>
               <span v-else>Accedi</span>
@@ -196,6 +196,7 @@ import { useCentroStore } from '~/stores/centro'
 
 definePageMeta({ layout: false })
 
+const brand = useBrand()
 const authStore = useAuthStore()
 const centroStore = useCentroStore()
 const router = useRouter()
@@ -230,7 +231,7 @@ const handleLogin = async () => {
         if (centroStore.centri.length === 0) {
           await centroStore.fetchCentri()
         }
-        router.push('/')
+        router.push('/dashboard')
       }
     } else {
       error.value = (result as any).error || 'Credenziali non valide'

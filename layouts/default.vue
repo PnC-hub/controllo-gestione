@@ -9,7 +9,7 @@
             <i class="fas fa-chart-pie text-white text-lg"></i>
           </div>
           <div>
-            <h1 class="text-white font-bold text-sm">Controllo di Gestione</h1>
+            <h1 class="text-white font-bold text-sm">Profitera</h1>
             <p class="text-white/50 text-xs">Multi-Azienda</p>
           </div>
         </div>
@@ -98,6 +98,7 @@ const sidebarOpen = ref(true)
 const pageTitle = computed(() => {
   const titles: Record<string, string> = {
     '/': 'Dashboard',
+    '/dashboard': 'Dashboard',
     '/contabilita': 'Dashboard Automatica',
     '/contabilita/regole': 'Regole Automatiche',
     '/contabilita/report': 'Report Contabile',

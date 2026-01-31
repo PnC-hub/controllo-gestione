@@ -15,6 +15,13 @@ export interface MenuItem {
 }
 
 export const menuConfig: MenuItem[] = [
+  // DASHBOARD
+  {
+    label: 'Dashboard',
+    route: '/dashboard',
+    icon: 'home'
+  },
+
   // CONTABILITÀ
   {
     label: 'Contabilità',
