@@ -17,7 +17,12 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
     const isValid = await authStore.checkAuth()
 
     if (!isValid) {
-      // Reindirizza al login
+      // Se sta andando alla root, mostra la landing invece del login
+      if (to.path === '/') {
+        const hostname = typeof window !== 'undefined' ? window.location.hostname : ''
+        const isProfitera = hostname.includes('profitera')
+        return navigateTo(isProfitera ? '/landing-profitera' : '/landing-geniusmile')
+      }
       return navigateTo('/login')
     }
   }
