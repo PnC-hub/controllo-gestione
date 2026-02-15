@@ -63,39 +63,6 @@ export const menuConfig: MenuItem[] = [
       { label: 'Monitor Finanziario', route: '/monitoraggio/finanziario' },
       { label: 'Gestione prezzi', route: '/prestazioni/gestione-prezzi' }
     ]
-  },
-
-  // PIANIFICAZIONE
-  {
-    label: 'Pianificazione',
-    icon: 'lightbulb',
-    children: [
-      { label: 'Piano Industriale', route: '/piano-industriale', icon: 'chart-line' },
-      { label: 'Proiezioni Dettagliate', route: '/piano-industriale/proiezioni', icon: 'file-invoice-dollar' },
-      { label: 'Analisi Scenari', route: '/piano-industriale/scenari', icon: 'sitemap' }
-    ]
-  },
-
-  // BUDGET
-  {
-    label: 'Budget',
-    icon: 'chart-trend-up',
-    children: [
-      { label: 'Budget Annuale', route: '/budget' },
-      { label: 'Forecast', route: '/budget/forecast' },
-      { label: 'Scostamenti', route: '/budget/scostamenti' }
-    ]
-  },
-
-  // COMPLIANCE
-  {
-    label: 'Compliance',
-    icon: 'shield-check',
-    children: [
-      { label: 'Contratti', route: '/contratti', icon: 'file-contract' },
-      { label: 'Parti Correlate', route: '/parti-correlate', icon: 'handshake' },
-      { label: 'Operazioni Globali', route: '/parti-correlate/operazioni', icon: 'list' }
-    ]
   }
 ]
 

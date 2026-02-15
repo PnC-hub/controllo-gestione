@@ -1,320 +1,374 @@
 <template>
-  <div v-if="isAuthenticated">
-    <NuxtLayout name="auth">
-      <div class="w-full">
-        <!-- Hero Section -->
-        <section class="text-center py-16 px-4">
-          <div class="max-w-4xl mx-auto">
-            <div class="w-20 h-20 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-xl">
-              <i class="fas fa-chart-pie text-white text-3xl"></i>
-            </div>
-            <h1 class="text-5xl md:text-6xl font-bold text-slate-800 mb-6">
-              Profitera
-            </h1>
-            <h2 class="text-3xl md:text-4xl font-semibold text-emerald-600 mb-6">
-              Controllo di Gestione Intelligente
-            </h2>
-            <p class="text-xl text-slate-600 mb-8 max-w-2xl mx-auto leading-relaxed">
-              La piattaforma SaaS completa per il controllo di gestione delle aziende italiane.
-              Gestisci contabilità, finanza e analisi in un'unica soluzione cloud.
-            </p>
-            <div class="flex flex-col sm:flex-row gap-4 justify-center">
-              <NuxtLink
-                to="/register"
-                class="px-8 py-4 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl transition shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
-              >
-                <i class="fas fa-rocket mr-2"></i>Registrati Gratis
-              </NuxtLink>
-              <NuxtLink
-                to="/login"
-                class="px-8 py-4 bg-white hover:bg-slate-50 text-emerald-600 font-semibold rounded-xl transition border-2 border-emerald-600"
-              >
-                <i class="fas fa-sign-in-alt mr-2"></i>Accedi
-              </NuxtLink>
-            </div>
-          </div>
-        </section>
-
-        <!-- Features Section -->
-        <section class="py-16 px-4 bg-white">
-          <div class="max-w-6xl mx-auto">
-            <div class="text-center mb-12">
-              <h3 class="text-3xl font-bold text-slate-800 mb-4">Tutte le funzionalità che ti servono</h3>
-              <p class="text-lg text-slate-600">Una suite completa per il controllo di gestione aziendale</p>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              <div v-for="feature in features" :key="feature.title" class="feature-card group">
-                <div :class="[feature.color, 'w-14 h-14 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform']">
-                  <i :class="['fas', feature.icon, 'text-2xl', feature.iconColor]"></i>
-                </div>
-                <h4 class="text-lg font-semibold text-slate-800 mb-2">{{ feature.title }}</h4>
-                <p class="text-sm text-slate-600">{{ feature.description }}</p>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- Pricing Section -->
-        <section class="py-16 px-4 bg-slate-50">
-          <div class="max-w-6xl mx-auto">
-            <div class="text-center mb-12">
-              <h3 class="text-3xl font-bold text-slate-800 mb-4">Prezzi semplici e trasparenti</h3>
-              <p class="text-lg text-slate-600">Scegli il piano perfetto per la tua azienda</p>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <div v-for="plan in pricingPlans" :key="plan.name" :class="[plan.featured ? 'pricing-card-featured' : 'pricing-card']">
-                <div v-if="plan.featured" class="absolute top-0 right-0 bg-emerald-600 text-white text-xs font-bold px-3 py-1 rounded-bl-lg rounded-tr-xl">
-                  POPOLARE
-                </div>
-                <h4 class="text-2xl font-bold text-slate-800 mb-2">{{ plan.name }}</h4>
-                <div class="mb-6">
-                  <span class="text-4xl font-bold text-emerald-600">€{{ plan.price }}</span>
-                  <span class="text-slate-600">/mese</span>
-                </div>
-                <ul class="space-y-3 mb-8">
-                  <li v-for="feature in plan.features" :key="feature" class="flex items-start text-slate-700">
-                    <i class="fas fa-check text-emerald-600 mt-1 mr-3"></i>
-                    <span>{{ feature }}</span>
-                  </li>
-                </ul>
-                <NuxtLink
-                  to="/register"
-                  :class="plan.featured ? 'btn-primary' : 'btn-secondary'"
-                >
-                  Inizia ora
-                </NuxtLink>
-              </div>
-            </div>
-
-            <div class="text-center mt-8 text-sm text-slate-500">
-              Tutti i prezzi sono IVA esclusa. Cancellazione possibile in qualsiasi momento.
-            </div>
-          </div>
-        </section>
-
-        <!-- CTA Section -->
-        <section class="py-16 px-4 bg-gradient-to-br from-emerald-600 to-emerald-700 text-white">
-          <div class="max-w-4xl mx-auto text-center">
-            <h3 class="text-3xl md:text-4xl font-bold mb-4">Pronto a migliorare il controllo di gestione?</h3>
-            <p class="text-xl mb-8 text-emerald-100">
-              Unisciti a centinaia di aziende italiane che hanno già scelto Profitera
-            </p>
-            <NuxtLink
-              to="/register"
-              class="inline-block px-10 py-4 bg-white text-emerald-600 hover:bg-emerald-50 font-bold rounded-xl transition shadow-xl transform hover:-translate-y-0.5"
-            >
-              <i class="fas fa-rocket mr-2"></i>Inizia la prova gratuita
-            </NuxtLink>
-            <p class="mt-6 text-sm text-emerald-100">
-              <i class="fas fa-lock mr-2"></i>Nessuna carta di credito richiesta
-            </p>
-          </div>
-        </section>
-
-        <!-- Footer -->
-        <footer class="bg-slate-900 text-white py-12 px-4">
-          <div class="max-w-6xl mx-auto">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
-              <div>
-                <div class="flex items-center gap-3 mb-4">
-                  <div class="w-10 h-10 bg-emerald-600 rounded-xl flex items-center justify-center">
-                    <i class="fas fa-chart-pie text-white"></i>
-                  </div>
-                  <h5 class="text-lg font-bold">Profitera</h5>
-                </div>
-                <p class="text-slate-400 text-sm">
-                  Controllo di gestione intelligente per aziende moderne
-                </p>
-              </div>
-              <div>
-                <h6 class="font-semibold mb-4">Prodotto</h6>
-                <ul class="space-y-2 text-sm text-slate-400">
-                  <li><a href="#" class="hover:text-white transition">Funzionalità</a></li>
-                  <li><a href="#" class="hover:text-white transition">Prezzi</a></li>
-                  <li><a href="#" class="hover:text-white transition">Sicurezza</a></li>
-                  <li><a href="#" class="hover:text-white transition">Roadmap</a></li>
-                </ul>
-              </div>
-              <div>
-                <h6 class="font-semibold mb-4">Azienda</h6>
-                <ul class="space-y-2 text-sm text-slate-400">
-                  <li><a href="#" class="hover:text-white transition">Chi siamo</a></li>
-                  <li><a href="#" class="hover:text-white transition">Blog</a></li>
-                  <li><a href="#" class="hover:text-white transition">Contatti</a></li>
-                  <li><a href="#" class="hover:text-white transition">Supporto</a></li>
-                </ul>
-              </div>
-              <div>
-                <h6 class="font-semibold mb-4">Legale</h6>
-                <ul class="space-y-2 text-sm text-slate-400">
-                  <li><a href="#" class="hover:text-white transition">Privacy Policy</a></li>
-                  <li><a href="#" class="hover:text-white transition">Termini di Servizio</a></li>
-                  <li><a href="#" class="hover:text-white transition">Cookie Policy</a></li>
-                  <li><a href="#" class="hover:text-white transition">GDPR</a></li>
-                </ul>
-              </div>
-            </div>
-            <div class="border-t border-slate-800 pt-8 text-center text-sm text-slate-400">
-              <p>&copy; 2025 Profitera. Tutti i diritti riservati.</p>
-            </div>
-          </div>
-        </footer>
+  <div>
+    <div class="card mb-6">
+      <div class="card-header flex justify-between items-center">
+        <h2 class="card-title">
+          <i class="fas fa-university mr-2 text-cyan-600"></i>
+          <span>Bank Control - Dashboard</span>
+        </h2>
+        <div class="flex items-center space-x-2 text-sm">
+          <span class="text-gray-500">Ruolo:</span>
+          <span class="font-semibold capitalize px-2 py-1 rounded" :class="getRoleBadgeClass()">
+            {{ permissions.role?.replace('_', ' ') }}
+          </span>
+        </div>
       </div>
-    </NuxtLayout>
+      <div class="card-content">
+        <!-- Filtri -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Conto:</label>
+            <select v-model="filters.bank_account_id" class="input-field" @change="loadDashboard()">
+              <option value="">Tutti i conti</option>
+              <option v-for="a in accounts" :key="a.id" :value="a.id">{{ a.name }}</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Da:</label>
+            <input type="date" v-model="filters.date_from" class="input-field" @change="loadDashboard()" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">A:</label>
+            <input type="date" v-model="filters.date_to" class="input-field" @change="loadDashboard()" />
+          </div>
+          <div class="flex items-end">
+            <button @click="loadDashboard()" class="btn-primary w-full">
+              <i class="fas fa-sync-alt mr-2"></i> Aggiorna
+            </button>
+          </div>
+        </div>
+
+        <div v-if="loading" class="p-12 text-center">
+          <i class="fas fa-spinner fa-spin text-4xl text-cyan-600 mb-4"></i>
+          <p class="text-gray-500">Caricamento dashboard...</p>
+        </div>
+
+        <div v-else>
+          <!-- ALERTS (se presenti) -->
+          <div v-if="dashboard.alerts?.length" class="mb-6">
+            <div class="flex flex-wrap gap-3">
+              <NuxtLink
+                v-for="alert in dashboard.alerts"
+                :key="alert.type"
+                :to="alert.action_url"
+                class="flex items-center px-4 py-2 rounded-lg text-sm font-medium transition-all hover:scale-105"
+                :class="getAlertClass(alert.severity)"
+              >
+                <i :class="getAlertIcon(alert.type)" class="mr-2"></i>
+                {{ alert.message }}
+              </NuxtLink>
+            </div>
+          </div>
+
+          <!-- LIQUIDITA' - Saldo Consolidato + Per Conto -->
+          <div class="mb-6">
+            <h3 class="text-lg font-semibold text-gray-800 mb-3">
+              <i class="fas fa-wallet mr-2 text-cyan-600"></i> Liquidità
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+              <!-- Consolidato -->
+              <div class="bg-gradient-to-r from-cyan-500 to-cyan-600 rounded-lg p-4 text-white md:col-span-1">
+                <div class="text-sm opacity-90">Saldo Consolidato</div>
+                <div class="text-3xl font-bold mt-1">
+                  {{ formatCurrency(dashboard.liquidity?.consolidated || 0) }}
+                </div>
+                <div class="text-xs opacity-75 mt-1">{{ dashboard.liquidity?.accounts?.length || 0 }} conti attivi</div>
+              </div>
+              <!-- Conti individuali -->
+              <div class="md:col-span-4 grid grid-cols-2 md:grid-cols-4 gap-3">
+                <div
+                  v-for="account in dashboard.liquidity?.accounts"
+                  :key="account.id"
+                  class="bg-gray-50 rounded-lg p-3 border border-gray-200 hover:shadow-md transition-shadow"
+                >
+                  <div class="text-xs text-gray-500 truncate">{{ account.name }}</div>
+                  <div class="text-xl font-bold mt-1" :class="account.balance >= 0 ? 'text-green-600' : 'text-red-600'">
+                    {{ formatCurrency(account.balance) }}
+                  </div>
+                  <div class="text-xs text-gray-400">{{ account.bank_name }}</div>
+                  <div v-if="account.iban" class="text-xs text-gray-300 mt-1 font-mono">{{ account.iban }}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- CASHFLOW - 4 Mesi -->
+          <div class="mb-6">
+            <h3 class="text-lg font-semibold text-gray-800 mb-3">
+              <i class="fas fa-chart-line mr-2 text-cyan-600"></i> Cashflow Mensile
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <div
+                v-for="(month, idx) in dashboard.cashflow"
+                :key="month.month"
+                class="bg-white rounded-lg border p-4"
+                :class="idx === 0 ? 'ring-2 ring-cyan-500' : ''"
+              >
+                <div class="text-sm font-medium text-gray-700 mb-3 flex items-center justify-between">
+                  <span>{{ month.month_name }}</span>
+                  <span v-if="idx === 0" class="text-xs bg-cyan-100 text-cyan-700 px-2 py-0.5 rounded">Corrente</span>
+                </div>
+                <div class="space-y-2">
+                  <div class="flex justify-between items-center">
+                    <span class="text-xs text-gray-500"><i class="fas fa-arrow-down text-green-500 mr-1"></i> Entrate</span>
+                    <span class="font-semibold text-green-600">{{ formatCurrency(month.credits) }}</span>
+                  </div>
+                  <div class="flex justify-between items-center">
+                    <span class="text-xs text-gray-500"><i class="fas fa-arrow-up text-red-500 mr-1"></i> Uscite</span>
+                    <span class="font-semibold text-red-600">{{ formatCurrency(month.debits) }}</span>
+                  </div>
+                  <div class="border-t pt-2 flex justify-between items-center">
+                    <span class="text-xs font-medium text-gray-600">Saldo</span>
+                    <span class="font-bold text-lg" :class="month.net >= 0 ? 'text-green-700' : 'text-red-700'">
+                      {{ formatCurrency(month.net) }}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- QUICK STATS -->
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+            <div class="bg-green-50 rounded-lg p-4 border-l-4 border-green-500">
+              <div class="text-sm text-green-600">Entrate (mese)</div>
+              <div class="text-2xl font-bold text-green-700">{{ formatCurrency(dashboard.quick_stats?.current_month?.credits || 0) }}</div>
+            </div>
+            <div class="bg-red-50 rounded-lg p-4 border-l-4 border-red-500">
+              <div class="text-sm text-red-600">Uscite (mese)</div>
+              <div class="text-2xl font-bold text-red-700">{{ formatCurrency(dashboard.quick_stats?.current_month?.debits || 0) }}</div>
+            </div>
+            <div class="bg-blue-50 rounded-lg p-4 border-l-4 border-blue-500">
+              <div class="text-sm text-blue-600">Transazioni (mese)</div>
+              <div class="text-2xl font-bold text-blue-700">{{ dashboard.quick_stats?.current_month?.transactions_count || 0 }}</div>
+            </div>
+            <div class="bg-purple-50 rounded-lg p-4 border-l-4 border-purple-500">
+              <div class="text-sm text-purple-600">Totale Transazioni</div>
+              <div class="text-2xl font-bold text-purple-700">{{ dashboard.quick_stats?.totals?.total_transactions || 0 }}</div>
+            </div>
+          </div>
+
+          <!-- TOP SPESE E CONTROPARTI -->
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+            <!-- Top Spese per Categoria -->
+            <div class="bg-white rounded-lg border p-4">
+              <h3 class="text-lg font-semibold text-gray-800 mb-4">
+                <i class="fas fa-chart-pie mr-2 text-red-500"></i> Top 10 Spese per Categoria
+              </h3>
+              <div v-if="dashboard.top_expenses_by_category?.length" class="space-y-3">
+                <div
+                  v-for="(cat, idx) in dashboard.top_expenses_by_category"
+                  :key="cat.category_id || idx"
+                  class="flex items-center justify-between py-2 border-b border-gray-100 last:border-0"
+                >
+                  <div class="flex items-center">
+                    <div class="w-6 h-6 rounded-full flex items-center justify-center text-white text-xs mr-3"
+                         :style="{ backgroundColor: cat.category_color || '#6B7280' }">
+                      {{ idx + 1 }}
+                    </div>
+                    <div>
+                      <div class="font-medium text-gray-800">{{ cat.category_name }}</div>
+                      <div class="text-xs text-gray-500">{{ cat.count }} transazioni</div>
+                    </div>
+                  </div>
+                  <span class="font-semibold text-red-600">{{ formatCurrency(cat.total) }}</span>
+                </div>
+              </div>
+              <div v-else class="text-gray-500 text-center py-8">
+                <i class="fas fa-inbox text-4xl mb-2"></i>
+                <p>Nessuna spesa nel periodo</p>
+              </div>
+            </div>
+
+            <!-- Top Controparti -->
+            <div class="bg-white rounded-lg border p-4">
+              <h3 class="text-lg font-semibold text-gray-800 mb-4">
+                <i class="fas fa-users mr-2 text-orange-500"></i> Top 10 Controparti (Uscite)
+              </h3>
+              <div v-if="dashboard.top_counterparties?.length" class="space-y-3">
+                <div
+                  v-for="(cp, idx) in dashboard.top_counterparties"
+                  :key="cp.counterparty"
+                  class="flex items-center justify-between py-2 border-b border-gray-100 last:border-0"
+                >
+                  <div class="flex items-center">
+                    <div class="w-6 h-6 rounded-full bg-orange-100 flex items-center justify-center text-orange-600 text-xs font-bold mr-3">
+                      {{ idx + 1 }}
+                    </div>
+                    <div>
+                      <div class="font-medium text-gray-800 truncate max-w-xs">{{ cp.counterparty }}</div>
+                      <div class="text-xs text-gray-500">{{ cp.count }} pagamenti</div>
+                    </div>
+                  </div>
+                  <span class="font-semibold text-red-600">{{ formatCurrency(cp.total) }}</span>
+                </div>
+              </div>
+              <div v-else class="text-gray-500 text-center py-8">
+                <i class="fas fa-user-slash text-4xl mb-2"></i>
+                <p>Nessuna controparte trovata</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- AZIONI RAPIDE -->
+          <div class="bg-white rounded-lg border p-4">
+            <h3 class="text-lg font-semibold text-gray-800 mb-4">
+              <i class="fas fa-bolt mr-2 text-yellow-500"></i> Azioni Rapide
+            </h3>
+            <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+              <NuxtLink v-if="permissions.can_import" to="/bank/import" class="btn-action bg-cyan-50 text-cyan-700 hover:bg-cyan-100">
+                <i class="fas fa-upload text-xl mb-2"></i>
+                <span>Import CSV/XLSX</span>
+              </NuxtLink>
+              <NuxtLink to="/bank/movimenti" class="btn-action bg-blue-50 text-blue-700 hover:bg-blue-100">
+                <i class="fas fa-list text-xl mb-2"></i>
+                <span>Movimenti</span>
+              </NuxtLink>
+              <NuxtLink v-if="permissions.can_manage_rules" to="/bank/regole" class="btn-action bg-purple-50 text-purple-700 hover:bg-purple-100">
+                <i class="fas fa-cogs text-xl mb-2"></i>
+                <span>Regole</span>
+              </NuxtLink>
+              <NuxtLink v-if="permissions.can_manage_accounts" to="/bank/conti" class="btn-action bg-green-50 text-green-700 hover:bg-green-100">
+                <i class="fas fa-university text-xl mb-2"></i>
+                <span>Conti</span>
+              </NuxtLink>
+              <NuxtLink to="/bank/categorie" class="btn-action bg-indigo-50 text-indigo-700 hover:bg-indigo-100">
+                <i class="fas fa-tags text-xl mb-2"></i>
+                <span>Categorie</span>
+              </NuxtLink>
+              <NuxtLink v-if="permissions.can_reconcile" to="/bank/riconciliazione" class="btn-action bg-teal-50 text-teal-700 hover:bg-teal-100">
+                <i class="fas fa-check-double text-xl mb-2"></i>
+                <span>Riconciliazione</span>
+              </NuxtLink>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-definePageMeta({ layout: false })
+import { useCentroStore } from '~/stores/centro'
 
-const brand = useBrand()
-const router = useRouter()
-const isAuthenticated = ref(false)
+definePageMeta({ layout: 'default' })
 
-// Check authentication on mount
-onMounted(() => {
-  // Check for token in localStorage
-  if (typeof localStorage !== 'undefined') {
-    const token = localStorage.getItem('token')
-    isAuthenticated.value = !!token
-  }
+const { fetchApi } = useApi()
+const centroStore = useCentroStore()
 
-  // If not authenticated, redirect to appropriate landing page
-  if (!isAuthenticated.value) {
-    if (brand.isProfitera) {
-      router.push('/landing-profitera')
-    } else {
-      router.push('/landing-geniusmile')
-    }
-  }
+const loading = ref(true)
+const accounts = ref<any[]>([])
+const dashboard = ref<any>({})
+const permissions = ref<any>({
+  role: 'viewer',
+  can_import: false,
+  can_categorize: false,
+  can_reconcile: false,
+  can_delete: false,
+  can_manage_accounts: false,
+  can_manage_rules: false,
+  can_approve_rules: false,
+  can_set_opening_balance: false,
+  is_owner_or_admin: false
 })
 
-const features = [
-  {
-    title: 'Budget Previsionale',
-    description: 'Pianifica e monitora il budget aziendale con precisione',
-    icon: 'fa-chart-line',
-    color: 'bg-blue-100',
-    iconColor: 'text-blue-600'
-  },
-  {
-    title: 'Contabilità Analitica',
-    description: 'Dashboard automatica e regole di contabilizzazione intelligenti',
-    icon: 'fa-calculator',
-    color: 'bg-cyan-100',
-    iconColor: 'text-cyan-600'
-  },
-  {
-    title: 'Analisi Fatturato',
-    description: 'Analizza ricavi e marginalità per prodotto e cliente',
-    icon: 'fa-chart-bar',
-    color: 'bg-purple-100',
-    iconColor: 'text-purple-600'
-  },
-  {
-    title: 'Gestione Banca',
-    description: 'Bank control e conciliazione bancaria automatizzata',
-    icon: 'fa-university',
-    color: 'bg-emerald-100',
-    iconColor: 'text-emerald-600'
-  },
-  {
-    title: 'Break-Even Point',
-    description: 'Calcola il punto di pareggio e analizza i costi',
-    icon: 'fa-balance-scale',
-    color: 'bg-amber-100',
-    iconColor: 'text-amber-600'
-  },
-  {
-    title: 'Monitoraggio Finanziario',
-    description: 'KPI e indicatori finanziari in tempo reale',
-    icon: 'fa-tachometer-alt',
-    color: 'bg-red-100',
-    iconColor: 'text-red-600'
-  },
-  {
-    title: 'Registri Contabili',
-    description: 'Registro economico, contabile e fiscale integrati',
-    icon: 'fa-book',
-    color: 'bg-indigo-100',
-    iconColor: 'text-indigo-600'
-  },
-  {
-    title: 'Riclassificazione Bilancio',
-    description: 'Riclassifica bilanci per tipologia e analisi interna',
-    icon: 'fa-sitemap',
-    color: 'bg-pink-100',
-    iconColor: 'text-pink-600'
-  }
-]
+const filters = reactive({
+  bank_account_id: '',
+  date_from: new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString().split('T')[0],
+  date_to: new Date().toISOString().split('T')[0]
+})
 
-const pricingPlans = [
-  {
-    name: 'Starter',
-    price: 49,
-    featured: false,
-    features: [
-      '1 azienda',
-      'Dashboard contabile',
-      'Bank control base',
-      'Report mensili',
-      'Supporto email',
-      '1 utente'
-    ]
-  },
-  {
-    name: 'Professional',
-    price: 99,
-    featured: true,
-    features: [
-      'Fino a 3 aziende',
-      'Tutte le funzionalità Starter',
-      'Analisi fatturato avanzata',
-      'BEP e costi previsionali',
-      'Riclassificazione bilancio',
-      'Supporto prioritario',
-      'Fino a 5 utenti',
-      'API access'
-    ]
-  },
-  {
-    name: 'Enterprise',
-    price: 199,
-    featured: false,
-    features: [
-      'Aziende illimitate',
-      'Tutte le funzionalità Professional',
-      'White label',
-      'Integrazioni custom',
-      'Account manager dedicato',
-      'Utenti illimitati',
-      'SLA garantito 99.9%',
-      'Backup giornalieri'
-    ]
+const formatCurrency = (v: any) => new Intl.NumberFormat('it-IT', { style: 'currency', currency: 'EUR' }).format(parseFloat(v) || 0)
+
+const getRoleBadgeClass = () => {
+  switch (permissions.value.role) {
+    case 'owner':
+      return 'bg-red-100 text-red-700'
+    case 'admin':
+      return 'bg-orange-100 text-orange-700'
+    case 'finance_operator':
+      return 'bg-blue-100 text-blue-700'
+    default:
+      return 'bg-gray-100 text-gray-700'
   }
-]
+}
+
+const getAlertClass = (severity: string) => {
+  switch (severity) {
+    case 'high':
+      return 'bg-red-100 text-red-700 border border-red-200'
+    case 'medium':
+      return 'bg-yellow-100 text-yellow-700 border border-yellow-200'
+    default:
+      return 'bg-blue-100 text-blue-700 border border-blue-200'
+  }
+}
+
+const getAlertIcon = (type: string) => {
+  switch (type) {
+    case 'uncategorized':
+      return 'fas fa-question-circle'
+    case 'duplicates':
+      return 'fas fa-clone'
+    case 'transfers':
+      return 'fas fa-exchange-alt'
+    case 'unmatched':
+      return 'fas fa-unlink'
+    case 'anomaly':
+      return 'fas fa-exclamation-triangle'
+    default:
+      return 'fas fa-info-circle'
+  }
+}
+
+const loadAccounts = async () => {
+  try {
+    const res = await fetchApi<any>('/bank/accounts')
+    if (res.success) {
+      accounts.value = res.data || []
+    }
+  } catch (e) {
+    console.error('Errore caricamento conti:', e)
+  }
+}
+
+const loadDashboard = async () => {
+  loading.value = true
+  try {
+    let url = `/bank/dashboard?date_from=${filters.date_from}&date_to=${filters.date_to}`
+    if (filters.bank_account_id) {
+      url += `&bank_account_id=${filters.bank_account_id}`
+    }
+
+    const res = await fetchApi<any>(url)
+    if (res.success) {
+      dashboard.value = res.data || {}
+      if (res.data?.permissions) {
+        permissions.value = res.data.permissions
+      }
+    }
+  } catch (e) {
+    console.error('Errore caricamento dashboard:', e)
+  } finally {
+    loading.value = false
+  }
+}
+
+onMounted(async () => {
+  if (!centroStore.centroCorrente && centroStore.centri.length === 0) {
+    await centroStore.fetchCentri()
+  }
+  await loadAccounts()
+  await loadDashboard()
+})
 </script>
 
 <style scoped>
-.feature-card {
-  @apply bg-white rounded-2xl border border-slate-200 p-6 hover:shadow-lg transition-all duration-300 hover:-translate-y-1;
-}
-
-.pricing-card {
-  @apply bg-white rounded-2xl border-2 border-slate-200 p-8 hover:shadow-lg transition-all duration-300 hover:-translate-y-1 relative;
-}
-
-.pricing-card-featured {
-  @apply bg-white rounded-2xl border-2 border-emerald-600 p-8 shadow-xl transform scale-105 relative;
-}
-
-.btn-primary {
-  @apply w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl transition shadow-md inline-block text-center;
-}
-
-.btn-secondary {
-  @apply w-full py-3 bg-slate-100 hover:bg-slate-200 text-slate-800 font-semibold rounded-xl transition inline-block text-center;
-}
+.card { @apply bg-white rounded-lg shadow; }
+.card-header { @apply px-4 py-3 border-b border-gray-200; }
+.card-title { @apply text-lg font-semibold text-gray-800 flex items-center; }
+.card-content { @apply p-4; }
+.input-field { @apply w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500; }
+.btn-primary { @apply px-4 py-2 bg-cyan-600 text-white rounded-lg hover:bg-cyan-700 transition-colors flex items-center justify-center; }
+.btn-action { @apply flex flex-col items-center justify-center p-4 rounded-lg font-medium transition-colors text-center; }
 </style>

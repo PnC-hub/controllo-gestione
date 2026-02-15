@@ -3,20 +3,26 @@ export default defineNuxtConfig({
 
   modules: [
     '@nuxtjs/tailwindcss',
-    '@pinia/nuxt'
+    '@pinia/nuxt',
+    '@nuxt/icon'
   ],
 
   ssr: false,
 
+  css: [
+    '@/assets/css/main.css',
+    '@/assets/css/bi-main.css'
+  ],
+
   app: {
     baseURL: '/',
     head: {
-      title: 'Profitera - Controllo di Gestione Intelligente',
+      title: 'Profitera - Controllo di Gestione Intelligente con BI',
       meta: [
         { charset: 'utf-8' },
         { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-        { name: 'description', content: 'Profitera - La piattaforma SaaS completa per il controllo di gestione delle aziende italiane. Contabilità, finanza e analisi in un\'unica soluzione cloud.' },
-        { name: 'theme-color', content: '#059669' },
+        { name: 'description', content: 'Profitera - La piattaforma SaaS completa per il controllo di gestione delle aziende italiane. Contabilità, finanza, Business Intelligence e analisi in un\'unica soluzione cloud.' },
+        { name: 'theme-color', content: '#9333ea' },
       ],
       link: [
         { rel: 'stylesheet', href: 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css' }
