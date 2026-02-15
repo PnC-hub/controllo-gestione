@@ -2,9 +2,20 @@
   <div>
     <div class="card">
       <div class="card-header flex justify-between items-center">
-        <h2 class="card-title">
-          <span>Import Movimenti Bancari</span>
-        </h2>
+        <div class="flex items-center gap-2">
+          <h2 class="card-title">
+            <span>Import Movimenti Bancari</span>
+          </h2>
+          <PageInfoButton
+            title="Import Movimenti"
+            description="Import movimenti bancari da file CSV/OFX con mapping automatico"
+            :features="[
+              'Supporto CSV e OFX',
+              'Mapping categorie automatico',
+              'Preview prima dell\'importazione'
+            ]"
+          />
+        </div>
         <NuxtLink to="/bank" class="text-cyan-600 hover:text-cyan-800">
           <i class="fas fa-arrow-left mr-1"></i> Torna alla Dashboard
         </NuxtLink>

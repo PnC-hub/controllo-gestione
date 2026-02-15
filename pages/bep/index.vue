@@ -2,10 +2,20 @@
   <div>
     <div class="card mb-4">
       <div class="card-header">
-        <h2 class="card-title">
-          BEP - Break Even Point
-          <i class="fas fa-info-circle text-cyan-600 ml-2" title="Il punto di pareggio indica il fatturato necessario per coprire tutti i costi"></i>
-        </h2>
+        <div class="flex items-center gap-2">
+          <h2 class="card-title">
+            BEP - Break Even Point
+          </h2>
+          <PageInfoButton
+            title="Break Even Point"
+            description="Calcolo del punto di pareggio aziendale con analisi scenari"
+            :features="[
+              'Calcolo BEP automatico',
+              'Grafico interattivo',
+              'Analisi what-if'
+            ]"
+          />
+        </div>
       </div>
       <div class="card-content p-4">
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4">

@@ -3,10 +3,21 @@
     <!-- Header -->
     <div class="card mb-6">
       <div class="card-header flex justify-between items-center">
-        <h2 class="card-title">
-          <i class="fas fa-file-import mr-2 text-cyan-600"></i>
-          <span>Autofatture</span>
-        </h2>
+        <div class="flex items-center gap-2">
+          <h2 class="card-title">
+            <i class="fas fa-file-import mr-2 text-cyan-600"></i>
+            <span>Autofatture</span>
+          </h2>
+          <PageInfoButton
+            title="Autofatture"
+            description="Gestione autofatture TD17-TD21 con workflow emissione e invio SDI"
+            :features="[
+              'Tipi: TD17-TD21',
+              'Workflow completo fino a SDI',
+              'Stats e tracking'
+            ]"
+          />
+        </div>
         <div class="flex items-center space-x-3">
           <button @click="openNuovaAutofattura" class="btn-primary">
             <i class="fas fa-plus mr-2"></i> Nuova Autofattura

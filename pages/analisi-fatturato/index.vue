@@ -2,7 +2,18 @@
   <div>
     <div class="card mb-4">
       <div class="card-header">
-        <h2 class="card-title">Analisi Fatturato</h2>
+        <div class="flex items-center gap-2">
+          <h2 class="card-title">Analisi Fatturato</h2>
+          <PageInfoButton
+            title="Analisi Fatturato"
+            description="Analisi dettagliata del fatturato per cliente, periodo e prestazione"
+            :features="[
+              'Breakdown per cliente',
+              'Trend mensile',
+              'Marginalità per servizio'
+            ]"
+          />
+        </div>
       </div>
       <div class="card-content p-4">
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4">

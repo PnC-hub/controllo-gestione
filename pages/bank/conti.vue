@@ -2,9 +2,20 @@
   <div>
     <div class="card">
       <div class="card-header flex justify-between items-center">
-        <h2 class="card-title">
-          <span>Conti Bancari</span>
-        </h2>
+        <div class="flex items-center gap-2">
+          <h2 class="card-title">
+            <span>Conti Bancari</span>
+          </h2>
+          <PageInfoButton
+            title="Conti Bancari"
+            description="Lista conti bancari con saldi, parametri e stato tesoreria"
+            :features="[
+              'Saldi in tempo reale per ogni conto',
+              'Parametri min/max configurabili',
+              'Dettaglio IBAN e stato'
+            ]"
+          />
+        </div>
         <button @click="openCreateModal" class="btn-primary text-sm">
           <i class="fas fa-plus mr-1"></i> Nuovo Conto
         </button>

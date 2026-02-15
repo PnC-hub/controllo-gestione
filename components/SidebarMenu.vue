@@ -64,6 +64,10 @@ onMounted(() => {
     '/costi': 'Finanziario',
     '/monitoraggio': 'Finanziario',
     '/prestazioni': 'Finanziario',
+    '/piano-industriale': 'Pianificazione',
+    '/budget': 'Budget',
+    '/contratti': 'Compliance',
+    '/parti-correlate': 'Compliance',
   }
   for (const [prefix, menuLabel] of Object.entries(pathToMenu)) {
     if (path.startsWith(prefix)) {

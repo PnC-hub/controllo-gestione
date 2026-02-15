@@ -3,7 +3,15 @@
     <div class="card-header flex justify-between items-center">
       <div class="flex items-center gap-3">
         <h2 class="card-title uppercase">Fatture</h2>
-        <i class="fa fa-info-circle text-cyan-600" title="Questo elenco mostra tutte le fatture che sono state generate"></i>
+        <PageInfoButton
+          title="Fatture"
+          description="Elenco fatture emesse con filtri, totale fatturato e dettaglio per operatore"
+          :features="[
+            'Filtri per data e ricerca',
+            'Totale fatturato del periodo',
+            'Tabella sortabile con azioni'
+          ]"
+        />
         <NuxtLink to="/fatture/scheda-extra?nuovo=1" class="btn btn-success btn-sm uppercase">
           <i class="fa fa-plus mr-1"></i> Aggiungi
         </NuxtLink>

@@ -5,7 +5,8 @@ import { routePermissions } from '~/config/menu.config'
 export default defineNuxtRouteMiddleware(async (to, from) => {
   // Pagine pubbliche - non applicare middleware
   const publicPages = ['/login', '/unauthorized', '/403', '/vendita', '/landing-profitera', '/landing-geniusmile']
-  if (publicPages.includes(to.path)) {
+  const normalizedPath = to.path.replace(/\/$/, '') || '/'
+  if (publicPages.includes(normalizedPath)) {
     return
   }
 
@@ -19,7 +20,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
     if (!isValid) {
       // Se sta andando alla root, mostra la landing invece del login
       if (to.path === '/') {
-        const hostname = typeof window !== 'undefined' ? window.location.hostname : ''
+        const hostname = typeof window !== 'undefined' ? (window.location?.hostname || '') : ''
         const isProfitera = hostname.includes('profitera')
         return navigateTo(isProfitera ? '/landing-profitera' : '/landing-geniusmile')
       }

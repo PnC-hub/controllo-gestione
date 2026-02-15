@@ -23,7 +23,7 @@
                 to="/register"
                 class="px-8 py-4 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl transition shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
               >
-                <i class="fas fa-rocket mr-2"></i>Inizia Gratis
+                <i class="fas fa-rocket mr-2"></i>Registrati Gratis
               </NuxtLink>
               <NuxtLink
                 to="/login"

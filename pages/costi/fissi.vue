@@ -21,6 +21,7 @@
     <div class="card mb-6">
       <div class="overflow-x-auto">
         <table class="w-full">
+          <tbody>
           <tr class="bg-green-100">
             <td class="px-4 py-3">
               <span class="text-green-800">COSTI FISSI ANNUI TOTALI:</span>
@@ -41,6 +42,7 @@
               <span class="font-bold text-green-900 text-lg">{{ formatCurrency(stats.costo_orario_totale) }}</span>
             </td>
           </tr>
+          </tbody>
         </table>
       </div>
     </div>

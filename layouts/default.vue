@@ -21,18 +21,9 @@
         </button>
       </div>
 
-      <!-- Centro Selector -->
-      <div v-if="sidebarOpen && centroStore.centri.length > 0" class="px-4 py-3 border-b border-white/10">
-        <label class="text-white/40 text-xs font-semibold uppercase tracking-wider mb-1 block">Azienda</label>
-        <select
-          :value="centroStore.centroId"
-          @change="changeCentro(Number(($event.target as HTMLSelectElement).value))"
-          class="w-full bg-white/10 text-white text-sm rounded-lg border border-white/20 px-3 py-2 focus:outline-none focus:border-cyan-400"
-        >
-          <option v-for="c in centroStore.centri" :key="c.id" :value="c.id" class="bg-slate-800">
-            {{ c.denominazione || c.nome }}
-          </option>
-        </select>
+      <!-- Tenant Switcher -->
+      <div v-if="sidebarOpen && centroStore.centri.length > 0" class="px-3 py-3 border-b border-white/10">
+        <TenantSwitcher />
       </div>
 
       <!-- Menu -->
@@ -81,6 +72,9 @@
         <slot />
       </main>
     </main>
+
+    <!-- Ticket System -->
+    <TicketSystem appName="Profitera" />
   </div>
 </template>
 
@@ -126,7 +120,27 @@ const pageTitle = computed(() => {
     '/costi/totali': 'Costi Totali',
     '/monitoraggio/finanziario': 'Monitor Finanziario',
     '/prestazioni/gestione-prezzi': 'Gestione Prezzi',
+    '/budget': 'Budget Annuale',
+    '/budget/forecast': 'Rolling Forecast',
+    '/budget/scostamenti': 'Analisi Scostamenti',
+    '/parti-correlate': 'Parti Correlate',
+    '/parti-correlate/operazioni': 'Operazioni Globali',
+    '/piano-industriale': 'Piano Industriale',
+    '/piano-industriale/proiezioni': 'Proiezioni Economico-Finanziarie',
+    '/piano-industriale/scenari': 'Analisi Scenari',
+    '/contratti': 'Contratti',
+    '/contratti/scadenzario': 'Scadenzario Contratti',
   }
+
+  // Handle dynamic routes
+  if (route.path.startsWith('/parti-correlate/') && route.path !== '/parti-correlate/operazioni') {
+    return 'Dettaglio Parte Correlata'
+  }
+
+  if (route.path.startsWith('/contratti/') && route.path !== '/contratti/scadenzario') {
+    return 'Dettaglio Contratto'
+  }
+
   return titles[route.path] || 'Controllo di Gestione'
 })
 

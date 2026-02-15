@@ -2,10 +2,21 @@
   <div>
     <div class="card mb-6">
       <div class="card-header flex justify-between items-center">
-        <h2 class="card-title">
-          <i class="fas fa-university mr-2 text-cyan-600"></i>
-          <span>Bank Control - Dashboard</span>
-        </h2>
+        <div class="flex items-center gap-2">
+          <h2 class="card-title">
+            <i class="fas fa-university mr-2 text-cyan-600"></i>
+            <span>Bank Control - Dashboard</span>
+          </h2>
+          <PageInfoButton
+            title="Bank Control"
+            description="Dashboard bancaria con panoramica conti, saldi e alert conciliazione"
+            :features="[
+              'Filtri per conto, periodo e tipo',
+              'Alert conciliazione automatici',
+              'Saldo complessivo e per conto'
+            ]"
+          />
+        </div>
         <div class="flex items-center space-x-2 text-sm">
           <span class="text-gray-500">Ruolo:</span>
           <span class="font-semibold capitalize px-2 py-1 rounded" :class="getRoleBadgeClass()">

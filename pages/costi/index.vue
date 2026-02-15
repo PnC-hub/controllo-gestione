@@ -2,10 +2,21 @@
   <div>
     <div class="card mb-6">
       <div class="card-header">
-        <h2 class="card-title">
-          <i class="fas fa-chart-pie mr-2 text-cyan-600"></i>
-          Riepilogo Costi
-        </h2>
+        <div class="flex items-center gap-2">
+          <h2 class="card-title">
+            <i class="fas fa-chart-pie mr-2 text-cyan-600"></i>
+            Riepilogo Costi
+          </h2>
+          <PageInfoButton
+            title="Riepilogo Costi"
+            description="Panoramica costi suddivisa per categoria con navigazione rapida"
+            :features="[
+              '5 categorie: variabili indiretti, gestionali, materiali, fissi, totali',
+              'Grafico ripartizione per categoria',
+              'Link rapidi per dettaglio'
+            ]"
+          />
+        </div>
       </div>
     </div>
 

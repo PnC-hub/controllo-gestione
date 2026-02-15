@@ -37,7 +37,7 @@
             </p>
             <div class="flex flex-col sm:flex-row gap-4 justify-center">
               <a href="#pricing" class="px-8 py-4 bg-gradient-to-r from-emerald-500 to-teal-600 text-white rounded-2xl font-bold text-lg hover:shadow-xl hover:shadow-emerald-500/25 transition-all hover:-translate-y-0.5">
-                Prova Gratis 14 Giorni <i class="fas fa-arrow-right ml-2"></i>
+                Registrati Gratis <i class="fas fa-arrow-right ml-2"></i>
               </a>
               <a href="#funzionalita" class="px-8 py-4 bg-white border-2 border-slate-200 text-slate-700 rounded-2xl font-bold text-lg hover:border-emerald-500 hover:text-emerald-600 transition-all">
                 Scopri le Funzionalità
@@ -133,7 +133,7 @@
           </div>
 
           <!-- Finanziario -->
-          <div>
+          <div class="mb-16">
             <div class="flex items-center gap-3 mb-8">
               <div class="w-12 h-12 bg-teal-600 rounded-xl flex items-center justify-center">
                 <i class="fas fa-chart-line text-white text-xl"></i>
@@ -154,6 +154,57 @@
               </div>
             </div>
           </div>
+
+          <!-- Pianificazione & Compliance -->
+          <div>
+            <div class="flex items-center gap-3 mb-8">
+              <div class="w-12 h-12 bg-emerald-600 rounded-xl flex items-center justify-center">
+                <i class="fas fa-clipboard-check text-white text-xl"></i>
+              </div>
+              <h3 class="text-2xl font-bold text-slate-800">Pianificazione & Compliance</h3>
+            </div>
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div v-for="f in complianceFeatures" :key="f.title" class="bg-white rounded-xl p-5 border border-slate-200 hover:border-emerald-300 hover:shadow-md transition-all">
+                <div class="flex items-start gap-3">
+                  <div class="w-9 h-9 bg-emerald-50 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <i :class="'fas fa-' + f.icon + ' text-emerald-500 text-sm'"></i>
+                  </div>
+                  <div>
+                    <h4 class="font-semibold text-slate-800">{{ f.title }}</h4>
+                    <p class="text-sm text-slate-500 mt-1">{{ f.desc }}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Compliance Ready -->
+      <section class="py-20 bg-emerald-50">
+        <div class="max-w-4xl mx-auto px-6 text-center">
+          <div class="inline-block bg-emerald-100 text-emerald-700 px-4 py-1 rounded-full text-sm font-bold mb-4">
+            Art. 2086 c.c.
+          </div>
+          <h3 class="text-3xl font-extrabold text-slate-900 mb-4">Compliance Ready per l'Art. 2086</h3>
+          <p class="text-lg text-slate-600 mb-8">
+            Tutti i dati di pianificazione necessari per la compliance Art. 2086 c.c., connessi automaticamente al Cruscotto Imperium
+          </p>
+          <div class="flex flex-wrap items-center justify-center gap-3 mb-8">
+            <span class="bg-white px-4 py-2 rounded-full text-sm font-medium text-slate-700 border border-emerald-200">Budget Previsionali</span>
+            <span class="text-emerald-400">•</span>
+            <span class="bg-white px-4 py-2 rounded-full text-sm font-medium text-slate-700 border border-emerald-200">Piano Industriale</span>
+            <span class="text-emerald-400">•</span>
+            <span class="bg-white px-4 py-2 rounded-full text-sm font-medium text-slate-700 border border-emerald-200">Parti Correlate</span>
+            <span class="text-emerald-400">•</span>
+            <span class="bg-white px-4 py-2 rounded-full text-sm font-medium text-slate-700 border border-emerald-200">Compliance Contrattuale</span>
+          </div>
+          <p class="text-sm text-slate-500 mb-6">
+            I dati Profitera alimentano automaticamente 4 delle 13 aree monitorate dai Tribunali
+          </p>
+          <a href="https://imperum.it" target="_blank" class="inline-flex items-center gap-2 text-emerald-600 font-semibold hover:text-emerald-700 transition">
+            Scopri il Cruscotto Compliance <i class="fas fa-arrow-right"></i>
+          </a>
         </div>
       </section>
 
@@ -311,9 +362,9 @@
       <section class="py-20 bg-gradient-to-br from-emerald-500 to-teal-600">
         <div class="max-w-3xl mx-auto px-6 text-center">
           <h2 class="text-3xl md:text-4xl font-extrabold text-white mb-4">Prendi il controllo dei tuoi numeri. Oggi.</h2>
-          <p class="text-lg text-emerald-100 mb-8">14 giorni gratis. Nessuna carta richiesta. Cancellazione immediata.</p>
-          <a href="mailto:info@profitera.it?subject=Prova Gratuita Profitera" class="inline-block px-8 py-4 bg-white text-emerald-600 rounded-2xl font-bold text-lg hover:shadow-xl transition-all hover:-translate-y-0.5">
-            Prova Gratis 14 Giorni <i class="fas fa-arrow-right ml-2"></i>
+          <p class="text-lg text-emerald-100 mb-8">Gratis per sempre. Nessuna carta richiesta. Upgrade quando vuoi.</p>
+          <a href="mailto:info@profitera.it?subject=Registrazione Gratuita Profitera" class="inline-block px-8 py-4 bg-white text-emerald-600 rounded-2xl font-bold text-lg hover:shadow-xl transition-all hover:-translate-y-0.5">
+            Registrati Gratis <i class="fas fa-arrow-right ml-2"></i>
           </a>
           <p class="mt-6 text-sm text-emerald-100">
             <i class="fas fa-lock mr-2"></i>Dati protetti e criptati. Server in EU.
@@ -373,6 +424,13 @@ const finanziarioFeatures = [
   { icon: 'balance-scale', title: 'Break Even Point', desc: 'Calcola il BEP e scopri quando vai in profitto' },
   { icon: 'coins', title: 'Analisi Costi', desc: 'Costi fissi, variabili, gestionali con previsionale' },
   { icon: 'tachometer-alt', title: 'Monitor Finanziario', desc: 'KPI real-time con alert su scostamenti budget' },
+]
+
+const complianceFeatures = [
+  { icon: 'piggy-bank', title: 'Budget Previsionale', desc: 'Inserimento voci costi/ricavi, forecast rolling e analisi scostamenti budget vs consuntivo' },
+  { icon: 'road', title: 'Piano Industriale', desc: 'Piano pluriennale con proiezioni 3-5 anni, analisi scenari best/base/worst case' },
+  { icon: 'people-arrows', title: 'Parti Correlate', desc: 'Registry parti correlate con anagrafica completa, registro operazioni infragruppo documentate' },
+  { icon: 'file-contract', title: 'Compliance Contrattuale', desc: 'Gestione contratti con compliance check clausole, scadenzario con alert automatici' },
 ]
 
 const starterFeatures = [
