@@ -18,8 +18,16 @@ export const menuConfig: MenuItem[] = [
   // DASHBOARD
   {
     label: 'Dashboard',
-    route: '/dashboard',
-    icon: 'home'
+    icon: 'home',
+    children: [
+      { label: 'Controllo di Gestione', route: '/dashboard', icon: 'tachometer-alt' },
+      { label: 'Ecosistema Integrato', route: '/dashboard/ecosystem', icon: 'network-wired' },
+      { label: 'Revenue & Crescita', route: '/dashboard/revenue', icon: 'coins' },
+      { label: 'Allerta Crisi', route: '/dashboard/allerta-crisi', icon: 'exclamation-triangle' },
+      { label: 'Benchmark', route: '/dashboard/benchmark', icon: 'chart-bar' },
+      { label: 'Piano Industriale', route: '/dashboard/piano-industriale', icon: 'rocket' },
+      { label: 'Report & Export', route: '/dashboard/export', icon: 'file-download' }
+    ]
   },
 
   // CONTABILITÀ
