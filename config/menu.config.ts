@@ -26,7 +26,8 @@ export const menuConfig: MenuItem[] = [
       { label: 'Allerta Crisi', route: '/dashboard/allerta-crisi', icon: 'exclamation-triangle' },
       { label: 'Benchmark', route: '/dashboard/benchmark', icon: 'chart-bar' },
       { label: 'Piano Industriale', route: '/dashboard/piano-industriale', icon: 'rocket' },
-      { label: 'Report & Export', route: '/dashboard/export', icon: 'file-download' }
+      { label: 'Report & Export', route: '/dashboard/export', icon: 'file-download' },
+      { label: 'Analisi Flusso Pazienti', route: '/analisi-flussi', icon: 'filter' }
     ]
   },
 
