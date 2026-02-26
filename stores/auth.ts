@@ -1,5 +1,4 @@
 import { defineStore } from 'pinia'
-import { getApiBaseFromDomain } from '~/utils/apiConfig'
 
 interface User {
   id: number
@@ -18,7 +17,7 @@ interface User {
 interface TwoFactorState {
   required: boolean
   sessionToken: string | null
-  cellulare: string | null
+  emailMasked: string | null
   otpSentAt: string | null
   userEmail: string | null
 }
@@ -41,7 +40,7 @@ export const useAuthStore = defineStore('auth', {
     twoFactor: {
       required: false,
       sessionToken: null,
-      cellulare: null,
+      emailMasked: null,
       otpSentAt: null,
       userEmail: null
     } as TwoFactorState
@@ -52,36 +51,19 @@ export const useAuthStore = defineStore('auth', {
     userInitials: (state) => state.user ? `${state.user.nome[0]}${state.user.cognome[0]}` : '',
     tenantName: (state) => state.user?.tenant_nome || '',
 
-    /**
-     * Verifica se l'utente ha un permesso specifico.
-     * Accetta formato: "CODICE" oppure "CODICE.power"
-     * Es: "PAZIENTI", "PAZIENTI.view", "FATTURE.edit"
-     */
     hasPermission: (state) => (permission: string): boolean => {
-      if (!permission) return true // Se non richiesto, sempre visibile
-
-      // Admin ha sempre tutti i permessi
+      if (!permission) return true
       if (state.user?.ruolo === 'admin') return true
-
-      // Controlla permesso esatto
       if (state.permissions.includes(permission.toUpperCase())) return true
-
-      // Se il permesso richiesto non ha suffisso (es: "PAZIENTI"),
-      // controlla se esiste almeno il view power (es: "PAZIENTI.view")
       if (!permission.includes('.')) {
         return state.permissions.includes(permission.toUpperCase() + '.view')
       }
-
       return false
     },
 
-    /**
-     * Verifica multipli permessi (OR logic)
-     */
     hasAnyPermission: (state) => (permissions: string[]): boolean => {
       if (!permissions || permissions.length === 0) return true
       if (state.user?.ruolo === 'admin') return true
-
       return permissions.some(p => {
         const pUpper = p.toUpperCase()
         if (state.permissions.includes(pUpper)) return true
@@ -111,68 +93,50 @@ export const useAuthStore = defineStore('auth', {
     },
 
     async login(email: string, password: string) {
-      const config = useRuntimeConfig()
-      const apiBase = getApiBaseFromDomain(config.public.apiBase as string)
-
       try {
-        // Usa URLSearchParams per form-data (workaround server JSON issue)
-        const formData = new URLSearchParams()
-        formData.append('email', email)
-        formData.append('password', password)
-
-        const response = await $fetch<{ success: boolean; token: string; user: any; tenant: any; requires_2fa?: boolean; session_token?: string; cellulare_masked?: string; otp_sent_at?: string }>(`${apiBase}/auth/login`, {
+        const response = await $fetch<{
+          success: boolean
+          token?: string
+          user?: any
+          requires_2fa?: boolean
+          session_token?: string
+          email_masked?: string
+        }>('/api/auth/login', {
           method: 'POST',
-          headers: {
-            'X-API-Key': config.public.apiKey,
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'Accept': 'application/json'
-          },
-          body: formData.toString()
+          body: { email, password }
         })
 
-        // Check if 2FA is required
+        // 2FA richiesto
         if (response.requires_2fa) {
           this.twoFactor = {
             required: true,
             sessionToken: response.session_token || null,
-            cellulare: response.cellulare_masked || null,
-            otpSentAt: response.otp_sent_at || null,
-            userEmail: email // Salva email per mostrare a chi stiamo inviando
+            emailMasked: response.email_masked || null,
+            otpSentAt: new Date().toISOString(),
+            userEmail: email
           }
           return { success: true, requires2fa: true }
         }
 
-        // Normal login flow
-        this.setToken(response.token)
-        // Mappa i dati utente includendo tenant info
-        const userData: User = {
-          id: response.user.id,
-          nome: response.user.nome,
-          cognome: response.user.cognome,
-          email: response.user.email,
-          ruolo: response.user.ruolo,
-          tenant_id: response.tenant?.id || 0,
-          tenant_nome: response.tenant?.nome || '',
-          gruppo: response.user.gruppo
+        // Login diretto
+        if (response.token) {
+          this.setToken(response.token)
         }
-        this.setUser(userData)
-
-        // Gestione permessi
-        if ((response as any).permissions) {
-          this.setPermissions((response as any).permissions)
+        if (response.user) {
+          const userData: User = {
+            id: response.user.id,
+            nome: response.user.nome,
+            cognome: response.user.cognome,
+            email: response.user.email,
+            ruolo: response.user.ruolo,
+            tenant_id: 0,
+            tenant_nome: 'Profitera',
+            gruppo: null
+          }
+          this.setUser(userData)
         }
 
-        // Gestione centro corrente e centri accessibili
-        if ((response as any).current_centro_id) {
-          this.currentCentroId = (response as any).current_centro_id
-        }
-        if ((response as any).centri_accessibili) {
-          this.centriAccessibili = (response as any).centri_accessibili
-        }
-
-        // Reset 2FA state
-        this.twoFactor = { required: false, sessionToken: null, cellulare: null, otpSentAt: null, userEmail: null }
-
+        this.twoFactor = { required: false, sessionToken: null, emailMasked: null, otpSentAt: null, userEmail: null }
         return { success: true }
       } catch (error: any) {
         return {
@@ -182,34 +146,28 @@ export const useAuthStore = defineStore('auth', {
       }
     },
 
-    async verify2fa(otp: string, trustDevice: boolean = false) {
-      const config = useRuntimeConfig()
-      const apiBase = getApiBaseFromDomain(config.public.apiBase as string)
-
+    async verify2fa(otp: string, _trustDevice: boolean = false) {
       if (!this.twoFactor.sessionToken) {
         return { success: false, error: 'Sessione 2FA non valida' }
       }
 
       try {
-        const response = await $fetch<{ success: boolean; token: string; user: any; tenant: any }>(`${apiBase}/auth/2fa/verifica`, {
+        const response = await $fetch<{
+          success: boolean
+          token: string
+          user: any
+        }>('/api/auth/verify-2fa', {
           method: 'POST',
-          headers: {
-            'X-API-Key': config.public.apiKey,
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-          },
-          body: JSON.stringify({
-            otp,
+          body: {
             session_token: this.twoFactor.sessionToken,
-            trust_device: trustDevice
-          })
+            otp
+          }
         })
 
         if (!response.success) {
           return { success: false, error: 'Codice OTP non valido' }
         }
 
-        // Complete login
         this.setToken(response.token)
         const userData: User = {
           id: response.user.id,
@@ -217,25 +175,13 @@ export const useAuthStore = defineStore('auth', {
           cognome: response.user.cognome,
           email: response.user.email,
           ruolo: response.user.ruolo,
-          tenant_id: (response as any).tenant?.id || 0,
-          tenant_nome: (response as any).tenant?.nome || '',
-          gruppo: response.user.gruppo
+          tenant_id: 0,
+          tenant_nome: 'Profitera',
+          gruppo: null
         }
         this.setUser(userData)
 
-        if ((response as any).permissions) {
-          this.setPermissions((response as any).permissions)
-        }
-        if ((response as any).current_centro_id) {
-          this.currentCentroId = (response as any).current_centro_id
-        }
-        if ((response as any).centri_accessibili) {
-          this.centriAccessibili = (response as any).centri_accessibili
-        }
-
-        // Reset 2FA state
-        this.twoFactor = { required: false, sessionToken: null, cellulare: null, otpSentAt: null, userEmail: null }
-
+        this.twoFactor = { required: false, sessionToken: null, emailMasked: null, otpSentAt: null, userEmail: null }
         return { success: true }
       } catch (error: any) {
         return {
@@ -246,25 +192,21 @@ export const useAuthStore = defineStore('auth', {
     },
 
     async resend2faOtp() {
-      const config = useRuntimeConfig()
-      const apiBase = getApiBaseFromDomain(config.public.apiBase as string)
-
       if (!this.twoFactor.sessionToken) {
         return { success: false, error: 'Sessione 2FA non valida' }
       }
 
       try {
-        const response = await $fetch<{ success: boolean; otp_sent_at: string }>(`${apiBase}/auth/2fa/reinvia`, {
+        const response = await $fetch<{
+          success: boolean
+          otp_sent_at?: string
+        }>('/api/auth/resend-otp', {
           method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${this.twoFactor.sessionToken}`,
-            'X-API-Key': config.public.apiKey,
-            'Accept': 'application/json'
-          }
+          body: { session_token: this.twoFactor.sessionToken }
         })
 
         if (response.success) {
-          this.twoFactor.otpSentAt = response.otp_sent_at
+          this.twoFactor.otpSentAt = response.otp_sent_at || new Date().toISOString()
         }
 
         return { success: response.success }
@@ -276,58 +218,8 @@ export const useAuthStore = defineStore('auth', {
       }
     },
 
-    async useRecoveryCode(code: string) {
-      const config = useRuntimeConfig()
-      const apiBase = getApiBaseFromDomain(config.public.apiBase as string)
-
-      if (!this.twoFactor.sessionToken) {
-        return { success: false, error: 'Sessione 2FA non valida' }
-      }
-
-      try {
-        const response = await $fetch<{ success: boolean; token: string; user: any; tenant: any; recovery_codes_remaining: number }>(`${apiBase}/auth/2fa/recovery`, {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${this.twoFactor.sessionToken}`,
-            'X-API-Key': config.public.apiKey,
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-          },
-          body: JSON.stringify({ recovery_code: code })
-        })
-
-        if (!response.success) {
-          return { success: false, error: 'Codice di recupero non valido' }
-        }
-
-        // Complete login
-        this.setToken(response.token)
-        const userData: User = {
-          id: response.user.id,
-          nome: response.user.nome,
-          cognome: response.user.cognome,
-          email: response.user.email,
-          ruolo: response.user.ruolo,
-          tenant_id: (response as any).tenant?.id || 0,
-          tenant_nome: (response as any).tenant?.nome || '',
-          gruppo: response.user.gruppo
-        }
-        this.setUser(userData)
-
-        // Reset 2FA state
-        this.twoFactor = { required: false, sessionToken: null, cellulare: null, otpSentAt: null, userEmail: null }
-
-        return { success: true, recoveryCodesRemaining: response.recovery_codes_remaining }
-      } catch (error: any) {
-        return {
-          success: false,
-          error: error.data?.message || 'Codice di recupero non valido'
-        }
-      }
-    },
-
     cancel2fa() {
-      this.twoFactor = { required: false, sessionToken: null, cellulare: null, otpSentAt: null, userEmail: null }
+      this.twoFactor = { required: false, sessionToken: null, emailMasked: null, otpSentAt: null, userEmail: null }
     },
 
     logout() {
@@ -349,15 +241,13 @@ export const useAuthStore = defineStore('auth', {
       const token = localStorage.getItem('auth_token')
       if (!token) return false
 
-      const config = useRuntimeConfig()
-      const apiBase = getApiBaseFromDomain(config.public.apiBase as string)
-
       try {
-        const response = await $fetch<{ success: boolean; user: any; tenant: any }>(`${apiBase}/auth/me`, {
+        const response = await $fetch<{
+          success: boolean
+          user: any
+        }>('/api/auth/me', {
           headers: {
-            'Authorization': `Bearer ${token}`,
-            'X-API-Key': config.public.apiKey,
-            'Accept': 'application/json'
+            'Authorization': `Bearer ${token}`
           }
         })
 
@@ -373,24 +263,11 @@ export const useAuthStore = defineStore('auth', {
           cognome: response.user.cognome,
           email: response.user.email,
           ruolo: response.user.ruolo,
-          tenant_id: response.tenant?.id || 0,
-          tenant_nome: response.tenant?.nome || '',
-          gruppo: response.user.gruppo
+          tenant_id: 0,
+          tenant_nome: 'Profitera',
+          gruppo: null
         }
         this.setUser(userData)
-
-        // Gestione permessi
-        if ((response as any).permissions) {
-          this.setPermissions((response as any).permissions)
-        }
-
-        // Gestione centro corrente e centri accessibili
-        if ((response as any).current_centro_id) {
-          this.currentCentroId = (response as any).current_centro_id
-        }
-        if ((response as any).centri_accessibili) {
-          this.centriAccessibili = (response as any).centri_accessibili
-        }
 
         return true
       } catch {
