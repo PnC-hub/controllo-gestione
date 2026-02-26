@@ -32,7 +32,7 @@
                 </p>
                 <p class="text-slate-500 mt-2">
                   Inserisci il codice a 6 cifre inviato a<br/>
-                  <span class="font-medium">{{ authStore.twoFactor.cellulare || 'il tuo cellulare' }}</span>
+                  <span class="font-medium">{{ authStore.twoFactor.emailMasked || 'la tua email' }}</span>
                 </p>
               </div>
 
@@ -84,13 +84,9 @@
                   </div>
 
                   <div class="text-center border-t pt-4">
-                    <button
-                      type="button"
-                      @click="showRecoveryForm = true"
-                      class="text-sm text-slate-500 hover:text-slate-700"
-                    >
-                      Hai perso l'accesso al telefono? <span :class="brand.isProfitera ? 'text-emerald-600' : 'text-cyan-600'">Usa codice di recupero</span>
-                    </button>
+                    <p class="text-xs text-slate-400">
+                      Non hai ricevuto l'email? Controlla la cartella spam.
+                    </p>
                   </div>
                 </div>
               </form>

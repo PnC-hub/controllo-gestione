@@ -4,7 +4,7 @@ import { routePermissions } from '~/config/menu.config'
 
 export default defineNuxtRouteMiddleware(async (to, from) => {
   // Pagine pubbliche - non applicare middleware
-  const publicPages = ['/login', '/unauthorized', '/403', '/vendita', '/landing-profitera', '/landing-geniusmile']
+  const publicPages = ['/login', '/register', '/forgot-password', '/unauthorized', '/403', '/vendita', '/landing-profitera', '/landing-geniusmile']
   const normalizedPath = to.path.replace(/\/$/, '') || '/'
   if (publicPages.includes(normalizedPath)) {
     return
