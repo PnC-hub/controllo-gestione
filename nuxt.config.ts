@@ -31,6 +31,7 @@ export default defineNuxtConfig({
   },
 
   runtimeConfig: {
+    openaiApiKey: process.env.OPENAI_API_KEY || '',
     public: {
       apiBase: process.env.NUXT_PUBLIC_API_BASE || 'https://api.geniusmile.com/api/v1',
       apiKey: process.env.NUXT_PUBLIC_API_KEY || 'sk_smiledoc_2025_xK9mP3nQ7rT2wY5v',

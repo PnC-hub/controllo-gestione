@@ -75,6 +75,31 @@
 
     <!-- Ticket System -->
     <TicketSystem appName="Profitera" />
+
+    <!-- AI CFO Chat -->
+    <button
+      @click="chat.toggle()"
+      class="fixed bottom-6 right-6 w-14 h-14 bg-gradient-to-br from-purple-600 to-indigo-600 text-white rounded-full shadow-lg hover:shadow-xl hover:scale-105 transition-all z-30 flex items-center justify-center group"
+      title="Profitera AI - CFO Assistant"
+    >
+      <i class="fas fa-brain text-xl group-hover:scale-110 transition-transform"></i>
+    </button>
+
+    <AiChatDrawer
+      :is-open="chat.isOpen.value"
+      :loading="chat.loading.value"
+      :error="chat.error.value"
+      :messages="chat.messages.value"
+      :conversations="chat.conversations.value"
+      :current-conversation-id="chat.currentConversationId.value"
+      v-model:input-message="chat.inputMessage.value"
+      @close="chat.close()"
+      @send="chat.sendMessage()"
+      @new-conversation="chat.newConversation()"
+      @load-conversation="chat.loadConversation($event)"
+      @delete-conversation="chat.deleteConversation($event)"
+      @quick-send="handleQuickSend"
+    />
   </div>
 </template>
 
@@ -86,6 +111,7 @@ const authStore = useAuthStore()
 const centroStore = useCentroStore()
 const route = useRoute()
 const router = useRouter()
+const chat = useChat()
 
 const sidebarOpen = ref(true)
 
@@ -130,6 +156,7 @@ const pageTitle = computed(() => {
     '/piano-industriale/scenari': 'Analisi Scenari',
     '/contratti': 'Contratti',
     '/contratti/scadenzario': 'Scadenzario Contratti',
+    '/analisi-flussi': 'Analisi Flusso Pazienti',
   }
 
   // Handle dynamic routes
@@ -151,6 +178,11 @@ const changeCentro = (id: number) => {
 const logout = () => {
   authStore.logout()
   router.push('/login')
+}
+
+const handleQuickSend = (text: string) => {
+  chat.inputMessage.value = text
+  nextTick(() => chat.sendMessage())
 }
 </script>
 
