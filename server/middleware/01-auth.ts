@@ -11,6 +11,7 @@ const PUBLIC_ROUTES = [
   '/api/auth/logout',
   '/api/health',
   '/api/integrations/',
+  '/api/v1/brain/consult',
 ]
 
 export default defineEventHandler(async (event) => {
