@@ -1,10 +1,16 @@
 import nodemailer from 'nodemailer'
 
 function getTransporter() {
+  const host = process.env.SMTP_HOST || 'smtp-relay.brevo.com'
+  const port = Number(process.env.SMTP_PORT) || 587
+  const user = process.env.SMTP_USER || ''
+  const pass = process.env.SMTP_PASS || ''
+
   return nodemailer.createTransport({
-    host: process.env.SMTP_HOST || 'localhost',
-    port: Number(process.env.SMTP_PORT) || 25,
+    host,
+    port,
     secure: false,
+    auth: (user && pass) ? { user, pass } : undefined,
     tls: { rejectUnauthorized: false }
   })
 }

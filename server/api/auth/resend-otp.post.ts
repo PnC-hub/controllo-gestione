@@ -1,6 +1,7 @@
 import { prisma } from '~/server/utils/prisma'
 import { createOtp, getLastOtpTime } from '~/server/utils/otp'
 import { sendOtpEmail, maskEmail } from '~/server/utils/email'
+import { sendOtpSms, maskPhone } from '~/server/utils/sms'
 
 export default defineEventHandler(async (event) => {
   const body = await readBody(event)
@@ -39,11 +40,23 @@ export default defineEventHandler(async (event) => {
     }
   }
 
-  // Genera nuovo OTP e invia
+  // Genera nuovo OTP e invia (SMS se disponibile, altrimenti email)
   const otpCode = await createOtp(session.userId, 'login_2fa')
-  const emailSent = await sendOtpEmail(session.user.email, otpCode, 'login_2fa')
+  let sent = false
+  let maskedDestination = maskEmail(session.user.email)
 
-  if (!emailSent) {
+  if (session.user.phone) {
+    sent = await sendOtpSms(session.user.phone, otpCode)
+    if (sent) {
+      maskedDestination = maskPhone(session.user.phone)
+    } else {
+      sent = await sendOtpEmail(session.user.email, otpCode, 'login_2fa')
+    }
+  } else {
+    sent = await sendOtpEmail(session.user.email, otpCode, 'login_2fa')
+  }
+
+  if (!sent) {
     throw createError({
       statusCode: 500,
       data: { message: 'Impossibile inviare il codice. Riprova.' }
@@ -58,7 +71,7 @@ export default defineEventHandler(async (event) => {
 
   return {
     success: true,
-    message: `Codice inviato a ${maskEmail(session.user.email)}`,
+    message: `Codice inviato a ${maskedDestination}`,
     otp_sent_at: new Date().toISOString()
   }
 })
