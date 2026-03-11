@@ -65,6 +65,7 @@ onMounted(() => {
     '/monitoraggio': 'Finanziario',
     '/prestazioni': 'Finanziario',
     '/analisi-flussi': 'Dashboard',
+    '/bilancio': 'Bilancio',
     '/piano-industriale': 'Pianificazione',
     '/budget': 'Budget',
     '/contratti': 'Compliance',

@@ -50,6 +50,19 @@ export const menuConfig: MenuItem[] = [
     ]
   },
 
+  // BILANCIO INTEGRATO
+  {
+    label: 'Bilancio',
+    icon: 'balance-scale',
+    children: [
+      { label: 'Hub Bilancio', route: '/bilancio', icon: 'th-large' },
+      { label: 'Conto Economico', route: '/bilancio/conto-economico', icon: 'file-invoice-dollar' },
+      { label: 'Stato Patrimoniale', route: '/bilancio/stato-patrimoniale', icon: 'university' },
+      { label: 'Cash Flow', route: '/bilancio/cash-flow', icon: 'water' },
+      { label: 'KPI Finanziari', route: '/bilancio/kpi', icon: 'tachometer-alt' },
+    ]
+  },
+
   // FINANZIARIO
   {
     label: 'Finanziario',
