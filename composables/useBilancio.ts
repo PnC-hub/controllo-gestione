@@ -1,3 +1,5 @@
+import { useAuthStore } from '~/stores/auth'
+
 export const useBilancio = () => {
   const ceData = ref<any>(null)
   const spData = ref<any>(null)
@@ -8,11 +10,20 @@ export const useBilancio = () => {
   const loading = reactive({ ce: false, sp: false, cf: false, kpi: false })
   const error = reactive<{ ce: any; sp: any; cf: any; kpi: any }>({ ce: null, sp: null, cf: null, kpi: null })
 
+  const getAuthHeaders = () => {
+    const authStore = useAuthStore()
+    let token = authStore.token
+    if (!token && typeof localStorage !== 'undefined') {
+      token = localStorage.getItem('auth_token')
+    }
+    return token ? { Authorization: `Bearer ${token}` } : {}
+  }
+
   const fetchCE = async () => {
     loading.ce = true
     error.ce = null
     try {
-      const res = await $fetch<any>('/api/bilancio/conto-economico')
+      const res = await $fetch<any>('/api/bilancio/conto-economico', { headers: getAuthHeaders() })
       if (res.success) ceData.value = res.data
     } catch (e) {
       error.ce = e
@@ -25,7 +36,7 @@ export const useBilancio = () => {
     loading.sp = true
     error.sp = null
     try {
-      const res = await $fetch<any>('/api/bilancio/stato-patrimoniale')
+      const res = await $fetch<any>('/api/bilancio/stato-patrimoniale', { headers: getAuthHeaders() })
       if (res.success) spData.value = res.data
     } catch (e) {
       error.sp = e
@@ -38,7 +49,7 @@ export const useBilancio = () => {
     loading.cf = true
     error.cf = null
     try {
-      const res = await $fetch<any>('/api/bilancio/cash-flow')
+      const res = await $fetch<any>('/api/bilancio/cash-flow', { headers: getAuthHeaders() })
       if (res.success) cfData.value = res.data
     } catch (e) {
       error.cf = e
@@ -51,7 +62,7 @@ export const useBilancio = () => {
     loading.kpi = true
     error.kpi = null
     try {
-      const res = await $fetch<any>('/api/bilancio/kpi')
+      const res = await $fetch<any>('/api/bilancio/kpi', { headers: getAuthHeaders() })
       if (res.success) {
         kpiData.value = res.data
         cagr.value = res.cagr ?? null
