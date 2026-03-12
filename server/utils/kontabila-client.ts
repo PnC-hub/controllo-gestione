@@ -2,7 +2,7 @@
  * Client singleton per chiamate autenticate a Kontabila API
  */
 
-const BASE_URL = process.env.KONTABILA_BASE_URL || 'https://kontabila.it:3025'
+const BASE_URL = process.env.KONTABILA_BASE_URL || 'http://localhost:3025'
 const EMAIL = process.env.KONTABILA_EMAIL || 'your-email@example.com'
 const PASSWORD = process.env.KONTABILA_PASSWORD || 'your-password'
 export const ENTITY_ID = parseInt(process.env.KONTABILA_ENTITY_ID || '1', 10)
