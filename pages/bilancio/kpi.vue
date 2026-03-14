@@ -216,11 +216,9 @@ const bepColor = (a: number) => {
 }
 
 onMounted(() => fetchKPI())
-</script>
 
-<script>
-// Inline sub-components as simple functional elements
-const KpiRow = {
+// Inline sub-components (devono stare in script setup per evitare mismatch lang)
+const KpiRow = defineComponent({
   props: ['label', 'value', 'sub', 'icon', 'color'],
   template: `
     <div class="flex items-center justify-between">
@@ -232,10 +230,10 @@ const KpiRow = {
         <span v-if="sub" class="text-xs text-slate-400 ml-1">{{ sub }}</span>
       </div>
     </div>
-  `
-}
+  `,
+})
 
-const CostBar = {
+const CostBar = defineComponent({
   props: ['label', 'value', 'color'],
   template: `
     <div>
@@ -248,6 +246,6 @@ const CostBar = {
           :style="{ width: Math.min(value, 100) + '%' }"></div>
       </div>
     </div>
-  `
-}
+  `,
+})
 </script>
