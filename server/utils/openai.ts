@@ -1,19 +1,19 @@
-import OpenAI from 'openai'
+import Anthropic from '@anthropic-ai/sdk'
 
-let _openai: OpenAI | null = null
+let _anthropic: Anthropic | null = null
 
-export function getOpenAI(): OpenAI {
-  if (!_openai) {
-    const apiKey = process.env.OPENAI_API_KEY
+function getAnthropic(): Anthropic {
+  if (!_anthropic) {
+    const apiKey = process.env.ANTHROPIC_API_KEY
     if (!apiKey) {
-      throw new Error('OPENAI_API_KEY non configurata')
+      throw new Error('ANTHROPIC_API_KEY non configurata')
     }
-    _openai = new OpenAI({ apiKey })
+    _anthropic = new Anthropic({ apiKey })
   }
-  return _openai
+  return _anthropic
 }
 
-export const OPENAI_MODEL = process.env.OPENAI_MODEL || 'gpt-4o'
+export const OPENAI_MODEL = process.env.ANTHROPIC_MODEL || 'claude-sonnet-4-6'
 export const CHAT_MAX_TOKENS = parseInt(process.env.CHAT_MAX_TOKENS || '2000', 10)
 export const CHAT_MAX_HISTORY = parseInt(process.env.CHAT_MAX_HISTORY || '20', 10)
 
@@ -56,14 +56,21 @@ export const CFO_SYSTEM_PROMPT = `Sei il CFO virtuale del gruppo Smiledoc, una r
 export async function chatWithGPT(
   messages: Array<{ role: 'system' | 'user' | 'assistant'; content: string }>,
 ): Promise<string> {
-  const openai = getOpenAI()
+  const anthropic = getAnthropic()
 
-  const response = await openai.chat.completions.create({
+  // Estrai system prompt e messaggi conversazione
+  const systemMsg = messages.find(m => m.role === 'system')
+  const chatMessages = messages
+    .filter(m => m.role !== 'system')
+    .map(m => ({ role: m.role as 'user' | 'assistant', content: m.content }))
+
+  const response = await anthropic.messages.create({
     model: OPENAI_MODEL,
-    messages,
     max_tokens: CHAT_MAX_TOKENS,
-    temperature: 0.7,
+    system: systemMsg?.content,
+    messages: chatMessages,
   })
 
-  return response.choices[0]?.message?.content ?? 'Mi scuso, non sono riuscito a generare una risposta.'
+  const block = response.content[0]
+  return block?.type === 'text' ? block.text : 'Mi scuso, non sono riuscito a generare una risposta.'
 }
