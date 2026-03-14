@@ -79,7 +79,7 @@
     <!-- AI CFO Chat -->
     <button
       @click="chat.toggle()"
-      class="fixed bottom-6 right-6 w-14 h-14 bg-gradient-to-br from-purple-600 to-indigo-600 text-white rounded-full shadow-lg hover:shadow-xl hover:scale-105 transition-all z-30 flex items-center justify-center group"
+      class="fixed bottom-24 right-6 w-14 h-14 bg-gradient-to-br from-purple-600 to-indigo-600 text-white rounded-full shadow-lg hover:shadow-xl hover:scale-105 transition-all z-40 flex items-center justify-center group"
       title="Profitera AI - CFO Assistant"
     >
       <i class="fas fa-brain text-xl group-hover:scale-110 transition-transform"></i>
