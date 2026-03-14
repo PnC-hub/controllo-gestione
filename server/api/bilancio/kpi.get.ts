@@ -2,137 +2,87 @@ import { fetchKontabila, ENTITY_ID } from '~/server/utils/kontabila-client'
 
 const ANNI = [2023, 2024, 2025]
 
-interface CERecord {
+interface CEMensile {
   year: number
   month: number
   totaleRicavi: number
   totaleCosti: number
   risultatoNetto: number
-  ebitda: number | null
+  righe?: Array<{ contoCode?: string; importo: number; isSubtotal?: boolean }>
 }
 
-interface SPRecord {
-  year: number
-  totaleAttivo?: number
-  attivitaCorrenti?: number
-  passivitaCorrenti?: number
-  patrimoniNetto?: number
-  debitiTotali?: number
-}
-
-function safe(v: number | null | undefined): number {
-  return v ?? 0
+function safe(v: any): number {
+  return Number(v) || 0
 }
 
 function perc(v: number, base: number): number | null {
-  return base !== 0 ? parseFloat(((v / base) * 100).toFixed(2)) : null
+  return base !== 0 ? parseFloat(((v / base) * 100).toFixed(1)) : null
+}
+
+function varPerc(curr: number, prev: number): number | null {
+  return prev !== 0 ? parseFloat((((curr - prev) / Math.abs(prev)) * 100).toFixed(1)) : null
 }
 
 export default defineEventHandler(async () => {
-  const ceByAnno: Record<number, { ricavi: number; costi: number; ebitda: number; netto: number }> = {}
-  const spByAnno: Record<number, { totaleAttivo: number; attivoCorrente: number; passivoCorrente: number; pn: number; debitiTotali: number }> = {}
+  type AnnoData = {
+    ricavi: number; costi: number; netto: number; ebitda: number
+    personale: number; godimento8_05: number; oneriFinanz: number; materie8_01: number
+  }
+
+  const datiAnno: Record<number, AnnoData> = {}
 
   for (const anno of ANNI) {
+    let ric = 0, cos = 0, net = 0
+    const sub: Record<string, number> = {}
     try {
-      const records = await fetchKontabila<CERecord[]>('/api/conto-economico/list', {
-        entityId: ENTITY_ID,
-        year: anno,
-      })
-      if (Array.isArray(records) && records.length > 0) {
-        ceByAnno[anno] = {
-          ricavi: records.reduce((s, r) => s + r.totaleRicavi, 0),
-          costi: records.reduce((s, r) => s + r.totaleCosti, 0),
-          ebitda: records.reduce((s, r) => s + safe(r.ebitda), 0),
-          netto: records.reduce((s, r) => s + r.risultatoNetto, 0),
+      const records = await fetchKontabila<CEMensile[]>('/api/conto-economico/list', { entityId: ENTITY_ID, year: anno })
+      if (Array.isArray(records)) {
+        for (const rec of records) {
+          ric += safe(rec.totaleRicavi)
+          cos += safe(rec.totaleCosti)
+          net += safe(rec.risultatoNetto)
+          for (const r of rec.righe ?? []) {
+            if (r.isSubtotal && r.contoCode) sub[r.contoCode] = (sub[r.contoCode] ?? 0) + safe(r.importo)
+          }
         }
-      } else {
-        ceByAnno[anno] = { ricavi: 0, costi: 0, ebitda: 0, netto: 0 }
       }
-    } catch {
-      ceByAnno[anno] = { ricavi: 0, costi: 0, ebitda: 0, netto: 0 }
+    } catch { /* usa zeri */ }
+
+    const oneriFinanz = sub['8.43'] ?? 0
+    const personale = (sub['8.10'] ?? 0) + (sub['8.11'] ?? 0) + (sub['8.12'] ?? 0) + (sub['8.14'] ?? 0)
+    datiAnno[anno] = {
+      ricavi: ric, costi: cos, netto: net,
+      ebitda: ric - cos + oneriFinanz,
+      personale, godimento8_05: sub['8.05'] ?? 0, oneriFinanz, materie8_01: sub['8.01'] ?? 0,
     }
   }
 
-  for (const anno of ANNI) {
-    try {
-      const list = await fetchKontabila<SPRecord[]>('/api/stato-patrimoniale', {
-        entityId: ENTITY_ID,
-        year: anno,
-      })
-      const spData = Array.isArray(list) ? list.find(r => r.year === anno) ?? null : null
-      if (spData) {
-        spByAnno[anno] = {
-          totaleAttivo: safe(spData.totaleAttivo),
-          attivoCorrente: safe(spData.attivitaCorrenti),
-          passivoCorrente: safe(spData.passivitaCorrenti),
-          pn: safe(spData.patrimoniNetto),
-          debitiTotali: safe(spData.debitiTotali),
-        }
-      } else {
-        spByAnno[anno] = { totaleAttivo: 0, attivoCorrente: 0, passivoCorrente: 0, pn: 0, debitiTotali: 0 }
-      }
-    } catch {
-      spByAnno[anno] = { totaleAttivo: 0, attivoCorrente: 0, passivoCorrente: 0, pn: 0, debitiTotali: 0 }
-    }
-  }
+  const r2023 = datiAnno[2023].ricavi
+  const r2025 = datiAnno[2025].ricavi
+  const cagr = r2023 > 0 && r2025 > 0
+    ? parseFloat((((Math.pow(r2025 / r2023, 1 / 2)) - 1) * 100).toFixed(1))
+    : null
 
   const kpi = ANNI.map((anno, idx) => {
-    const ce = ceByAnno[anno]
-    const sp = spByAnno[anno]
-    const prevAnno = idx > 0 ? ANNI[idx - 1] : null
-    const prevCe = prevAnno ? ceByAnno[prevAnno] : null
-
-    const ebitdaMargin = perc(ce.ebitda, ce.ricavi)
-    const netMargin = perc(ce.netto, ce.ricavi)
-    const roe = perc(ce.netto, sp.pn)
-    const roi = perc(ce.ebitda, sp.totaleAttivo)
-
-    const currentRatio = sp.passivoCorrente !== 0
-      ? parseFloat((sp.attivoCorrente / sp.passivoCorrente).toFixed(2))
-      : null
-    const debtEquity = sp.pn !== 0
-      ? parseFloat((sp.debitiTotali / sp.pn).toFixed(2))
-      : null
-
-    const deltaRicavi = prevCe && prevCe.ricavi !== 0
-      ? perc(ce.ricavi - prevCe.ricavi, prevCe.ricavi)
-      : null
-
-    // BEP: costi fissi ≈ 40%, costi variabili ≈ 60%
-    const costiFissi = ce.costi * 0.40
-    const costiVariabili = ce.costi * 0.60
-    const margineContrib = ce.ricavi > 0 ? (ce.ricavi - costiVariabili) / ce.ricavi : 0
-    const bep = margineContrib > 0 ? Math.round(costiFissi / margineContrib) : null
-
+    const d = datiAnno[anno]
+    const prev = idx > 0 ? datiAnno[ANNI[idx - 1]] : null
+    const fissi = d.personale + d.godimento8_05
+    const variabili = d.materie8_01
+    const mc = d.ricavi > 0 ? (d.ricavi - variabili) / d.ricavi : 0
     return {
       anno,
-      redditività: {
-        ricavi: ce.ricavi,
-        ebitda: ce.ebitda,
-        ebitdaMargin,
-        netMargin,
-        roe,
-        roi,
-        risultatoNetto: ce.netto,
-      },
-      struttura: {
-        currentRatio,
-        debtEquity,
-        totaleAttivo: sp.totaleAttivo,
-        pn: sp.pn,
-      },
-      crescita: {
-        deltaRicaviPerc: deltaRicavi,
-        bep,
-      },
+      ricavi: d.ricavi, costi: d.costi, ebitda: d.ebitda, netto: d.netto,
+      personale: d.personale, godimento8_05: d.godimento8_05, materie8_01: d.materie8_01, oneriFinanz: d.oneriFinanz,
+      ebitdaMargin: perc(d.ebitda, d.ricavi),
+      netMargin: perc(d.netto, d.ricavi),
+      costiPersonalePerc: perc(d.personale, d.ricavi),
+      costiStrutturaPerc: perc(d.godimento8_05, d.ricavi),
+      deltaRicavi: prev ? varPerc(d.ricavi, prev.ricavi) : null,
+      deltaEbitda: prev ? varPerc(d.ebitda, prev.ebitda) : null,
+      deltaNetto: prev ? varPerc(d.netto, prev.netto) : null,
+      bep: mc > 0 ? Math.round(fissi / mc) : null,
     }
   })
-
-  const r2023 = ceByAnno[2023].ricavi
-  const r2025 = ceByAnno[2025].ricavi
-  const cagr = r2023 > 0
-    ? parseFloat((((Math.pow(r2025 / r2023, 0.5)) - 1) * 100).toFixed(2))
-    : null
 
   return { success: true, data: kpi, cagr }
 })
