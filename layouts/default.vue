@@ -60,10 +60,7 @@
           <p v-if="centroStore.centroNome" class="text-sm text-slate-400">{{ centroStore.centroNome }}</p>
         </div>
         <div class="flex items-center gap-3">
-          <span class="text-xs text-slate-400">
-            <i class="fas fa-building mr-1"></i>
-            {{ centroStore.centri.length }} aziende
-          </span>
+          <EntitySelector />
         </div>
       </header>
 
