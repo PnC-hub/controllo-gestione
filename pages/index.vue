@@ -1,5 +1,6 @@
 <template>
   <div>
+    <DashboardFinanceCharts />
     <div class="card mb-6">
       <div class="card-header flex justify-between items-center">
         <h2 class="card-title">
