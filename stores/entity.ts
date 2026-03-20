@@ -32,11 +32,13 @@ export const useEntityStore = defineStore('entity', {
         const data = await $fetch<Entity[]>('/api/kontabila/entities')
         this.entities = data
         // Ripristina selezione da localStorage
-        const saved = localStorage.getItem('profitera_entity_id')
-        if (saved) {
-          const id = parseInt(saved)
-          if (this.entities.find(e => e.id === id)) {
-            this.selectedEntityId = id
+        if (import.meta.client) {
+          const saved = localStorage.getItem('profitera_entity_id')
+          if (saved) {
+            const id = parseInt(saved)
+            if (this.entities.find(e => e.id === id)) {
+              this.selectedEntityId = id
+            }
           }
         }
       } finally {
@@ -46,10 +48,12 @@ export const useEntityStore = defineStore('entity', {
 
     selectEntity(id: number | null) {
       this.selectedEntityId = id
-      if (id) {
-        localStorage.setItem('profitera_entity_id', String(id))
-      } else {
-        localStorage.removeItem('profitera_entity_id')
+      if (import.meta.client) {
+        if (id) {
+          localStorage.setItem('profitera_entity_id', String(id))
+        } else {
+          localStorage.removeItem('profitera_entity_id')
+        }
       }
     },
   },
