@@ -29,7 +29,9 @@ export const useEntityStore = defineStore('entity', {
     async fetchEntities() {
       this.loading = true
       try {
-        const data = await $fetch<Entity[]>('/api/kontabila/entities')
+        const token = import.meta.client ? localStorage.getItem('auth_token') : null
+        const headers = token ? { Authorization: `Bearer ${token}` } : {}
+        const data = await $fetch<Entity[]>('/api/kontabila/entities', { headers })
         this.entities = data
         // Ripristina selezione da localStorage
         if (import.meta.client) {

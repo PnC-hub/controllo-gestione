@@ -64,12 +64,17 @@ interface ChartsData {
 
 const data = ref<ChartsData | null>(null)
 
+function getAuthHeaders(): Record<string, string> {
+  const token = import.meta.client ? localStorage.getItem('auth_token') : null
+  return token ? { Authorization: `Bearer ${token}` } : {}
+}
+
 async function fetchCharts() {
   loading.value = true
   error.value = false
   try {
     const params = entityStore.selectedEntityId ? { entityId: entityStore.selectedEntityId } : {}
-    data.value = await $fetch<ChartsData>('/api/kontabila/charts', { query: params })
+    data.value = await $fetch<ChartsData>('/api/kontabila/charts', { query: params, headers: getAuthHeaders() })
   } catch {
     error.value = true
   } finally {
